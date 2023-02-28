@@ -4,8 +4,8 @@ import db from '.';
 class TeamModel extends Model {
   public id!: number;
   public teamName!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  // public readonly createdAt!: Date;
+  // public readonly updatedAt!: Date;
 }
 
 TeamModel.init(
@@ -20,22 +20,21 @@ TeamModel.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
+    // createdAt: {
+    //   type: DataTypes.DATE,
+    //   allowNull: false,
+    //   defaultValue: DataTypes.NOW,
+    // },
+    // updatedAt: {
+    //   type: DataTypes.DATE,
+    //   allowNull: false,
+    //   defaultValue: DataTypes.NOW,
+    // },
   },
   {
     underscored: true,
     sequelize: db,
     tableName: 'teams',
-    timestamps: true,
     modelName: 'Team',
   },
 );
