@@ -1,64 +1,80 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, INTEGER, BOOLEAN } from 'sequelize';
 import db from '.';
-import Team from './TeamModel';
+import TeamModel from './TeamModel';
 
-class Matchs extends Model {}
+interface IMatch {
+  id?: number;
+  homeTeamId: number;
+  awayTeamId: number;
+  homeTeamGoals: number;
+  awayTeamGoals: number;
+  inProgress?: boolean;
+}
 
-Matchs.init(
+class MatchesModel extends Model implements IMatch {
+  declare id: number;
+  declare homeTeamId: number;
+  declare homeTeamGoals: number;
+  declare awayTeamId: number;
+  declare awayTeamGoals: number;
+  declare inProgress: boolean;
+
+  static associate() {
+    TeamModel.hasMany(MatchesModel, {
+      foreignKey: 'homeTeam',
+      as: 'homeTeamHasMany',
+    });
+    TeamModel.hasMany(MatchesModel, {
+      foreignKey: 'awayTeam',
+      as: 'awayTeamHasMany',
+    });
+
+    MatchesModel.belongsTo(TeamModel, {
+      foreignKey: 'homeTeam',
+      as: 'teamHome',
+    });
+    MatchesModel.belongsTo(TeamModel, {
+      foreignKey: 'awayTeam',
+      as: 'teamAway',
+    });
+  }
+}
+
+MatchesModel.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      allowNull: false,
+      type: INTEGER,
     },
-    homeTeam: {
-      type: DataTypes.NUMBER,
+    homeTeamId: {
       allowNull: false,
+      type: INTEGER,
     },
     homeTeamGoals: {
-      type: DataTypes.NUMBER,
       allowNull: false,
+      type: INTEGER,
     },
-    awayTeam: {
-      type: DataTypes.NUMBER,
+    awayTeamId: {
       allowNull: false,
+      type: INTEGER,
     },
     awayTeamGoals: {
-      type: DataTypes.NUMBER,
       allowNull: false,
+      type: INTEGER,
     },
     inProgress: {
-      type: DataTypes.BOOLEAN,
       allowNull: false,
+      type: BOOLEAN,
     },
   },
   {
-    sequelize: db,
-    timestamps: false,
-    modelName: 'matchs',
     underscored: true,
+    sequelize: db,
+    modelName: 'matches',
+    timestamps: false,
   },
 );
 
-Team.hasMany(Matchs, {
-  foreignKey: 'homeTeam',
-  as: 'homeMatchs',
-});
-
-Team.hasMany(Matchs, {
-  foreignKey: 'awayTeam',
-  as: 'awayMatchs',
-});
-
-Matchs.belongsTo(Team, {
-  foreignKey: 'homeTeam',
-  as: 'homeClub',
-});
-
-Matchs.belongsTo(Team, {
-  foreignKey: 'awayTeam',
-  as: 'awayClub',
-});
-
-export default Matchs;
+export default MatchesModel;

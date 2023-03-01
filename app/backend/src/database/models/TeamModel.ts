@@ -1,41 +1,30 @@
-import { Model, DataTypes } from 'sequelize';
+/* eslint-disable import/no-cycle */
+import { Model, INTEGER, STRING } from 'sequelize';
 import db from '.';
 
 class TeamModel extends Model {
-  public id!: number;
-  public teamName!: string;
-  // public readonly createdAt!: Date;
-  // public readonly updatedAt!: Date;
+  declare id: number;
+  declare teamName: string;
 }
 
 TeamModel.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      allowNull: false,
+      type: INTEGER,
     },
     teamName: {
-      type: DataTypes.STRING(255),
       allowNull: false,
+      type: STRING,
     },
-    // createdAt: {
-    //   type: DataTypes.DATE,
-    //   allowNull: false,
-    //   defaultValue: DataTypes.NOW,
-    // },
-    // updatedAt: {
-    //   type: DataTypes.DATE,
-    //   allowNull: false,
-    //   defaultValue: DataTypes.NOW,
-    // },
   },
   {
     underscored: true,
     sequelize: db,
-    tableName: 'teams',
-    modelName: 'Team',
+    modelName: 'teams',
+    timestamps: false,
   },
 );
 
