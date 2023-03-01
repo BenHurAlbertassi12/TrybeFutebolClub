@@ -1,9 +1,12 @@
-import { Request, Response, Router } from 'express';
+import * as express from 'express';
+import TeamService from '../service/TeamService';
+import TeamController from '../controller/TeamController';
 
-const teamsRouter = Router();
+const route = express.Router();
 
-teamsRouter.get('/', (_req: Request, res: Response) => {
-  res.status(200).json();
-});
+const teamController = new TeamController(new TeamService());
 
-export default teamsRouter;
+route.get('/', teamController.findAll);
+route.get('/:id', teamController.findByPk);
+
+export default route;
