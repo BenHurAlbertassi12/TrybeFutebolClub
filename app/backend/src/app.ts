@@ -1,5 +1,6 @@
 import * as express from 'express';
 import teamsRouter from './router/Team';
+import loginRouter from './router/Login';
 
 class App {
   public app: express.Express;
@@ -14,6 +15,7 @@ class App {
 
     // Rotas requisitos
     this.app.use('/teams', teamsRouter);
+    this.app.use('/login', loginRouter);
   }
 
   private config():void {
