@@ -3,7 +3,6 @@ import * as Joi from 'joi';
 interface ILogin {
   email: string;
   password: string;
-  username?: string;
 }
 
 const loginJoi = Joi.object({
