@@ -1,25 +1,25 @@
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express';
 
 interface ILogin {
   email: string;
   password: string;
-  username?: string;
 }
 
 interface IUser {
   login(login: ILogin): Promise<string | void>;
-  findRole(email: string): Promise<{ role: string } | void>;
 }
 
 class UserController {
-  constructor(private _userService: IUser) {}
+  constructor(private userService: IUser) { }
 
-  login(req: Request, res: Response, next: NextFunction) {
-    this._userService
-      .login(req.body)
-      .then((token) => res.status(200).json({ token }))
-      .catch((error) => next(error));
-  }
+  login: RequestHandler = async (req, res, next) => {
+    try {
+      const token = await this.userService.login(req.body);
+      return res.status(200).json({ token });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default UserController;
