@@ -1,39 +1,26 @@
+import { ModelStatic } from 'sequelize';
 import * as bcrypt from 'bcryptjs';
-import Token from '../jwt/Token';
 import User from '../database/models/UsersModel';
-import ILogin from '../interface/ILogin';
+import LoginUser from '../utils/LoginUser';
 
-interface IUserService {
-  login(login: ILogin): Promise<string | void>;
-  findRole(email: string): Promise<{ role: string } | void>;
+interface IUser {
+  email: string;
+  password: string;
 }
 
-export default class UserService implements IUserService {
-  constructor(private _userModel = User) {}
+export default class UserService {
+  protected model: ModelStatic<User> = User;
 
-  async login(login: ILogin): Promise<string> {
-    const { email, password } = login;
-    const userExists = await this._userModel.findOne({ where: { email } });
-    if (!userExists) {
-      throw new Error('User not found');
+  async UserLogin(user: IUser): Promise<User | null> {
+    LoginUser(user);
+    const result = await this.model.findOne({ where: { email: user.email } });
+    if (!result) {
+      throw new Error('Invalid email or password');
     }
-
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      userExists.password,
-    );
-    if (!isPasswordCorrect) {
-      throw new Error('Incorrect password');
+    const validateUser = bcrypt.compareSync(user.password, result.password || '-');
+    if (!validateUser) {
+      return null;
     }
-
-    return Token(login);
-  }
-
-  async findRole(email: string): Promise<{ role: string }> {
-    const userInformation = await this._userModel.findOne({ where: { email } });
-    if (!userInformation) {
-      throw new Error('User not found');
-    }
-    return { role: userInformation.role };
+    return result.dataValues;
   }
 }

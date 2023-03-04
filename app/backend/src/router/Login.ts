@@ -1,12 +1,17 @@
-import * as express from 'express';
-import LoginMiddleware from '../middleware/LoginMiddleware';
+import { Router, Request, Response } from 'express';
 import UserController from '../controller/UserController';
-import UserService from '../service/UserService';
+import Token from '../jwt/TokenValidator';
 
-const route = express.Router();
+const userController = new UserController();
 
-const userController = new UserController(new UserService());
+const route = Router();
 
-route.post('/', LoginMiddleware, userController.login);
+route.post('/', (req: Request, res: Response) =>
+  userController.ControllerLogin(req, res));
+
+route.get('/role', Token, (req: Request, res: Response) => {
+  const userRole = res.locals.user.role;
+  res.status(200).json({ role: userRole });
+});
 
 export default route;
