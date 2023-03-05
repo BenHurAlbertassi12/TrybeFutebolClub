@@ -1,13 +1,12 @@
-/* eslint-disable import/no-cycle */
-import { Model, INTEGER, STRING } from 'sequelize';
+import { Model, STRING, INTEGER } from 'sequelize';
 import db from '.';
 
-class TeamModel extends Model {
-  declare id: number;
-  declare teamName: string;
+class Team extends Model {
+  readonly id!: number;
+  teamName!: string;
 }
 
-TeamModel.init(
+Team.init(
   {
     id: {
       allowNull: false,
@@ -16,6 +15,7 @@ TeamModel.init(
       type: INTEGER,
     },
     teamName: {
+      field: 'team_name',
       allowNull: false,
       type: STRING,
     },
@@ -23,9 +23,10 @@ TeamModel.init(
   {
     underscored: true,
     sequelize: db,
-    modelName: 'teams',
+    modelName: 'Team',
+    tableName: 'teams',
     timestamps: false,
   },
 );
 
-export default TeamModel;
+export default Team;

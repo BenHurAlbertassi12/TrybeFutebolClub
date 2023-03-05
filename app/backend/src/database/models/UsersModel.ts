@@ -1,52 +1,45 @@
 import { Model, INTEGER, STRING } from 'sequelize';
 import db from '.';
 
-interface IUser {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-  password: string;
-}
-
-class User extends Model implements IUser {
-  declare id: number;
-  declare username: string;
+class User extends Model {
+  declare readonly id: number;
   declare email: string;
-  declare role: string;
+  declare username: string;
   declare password: string;
+  declare role: string;
 }
 
 User.init(
   {
-    email: {
-      allowNull: false,
-      type: STRING,
-    },
     id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
       type: INTEGER,
-    },
-    password: {
+      autoIncrement: true,
       allowNull: false,
-      type: STRING,
-    },
-    role: {
-      allowNull: false,
-      type: STRING,
+      primaryKey: true,
     },
     username: {
-      allowNull: false,
       type: STRING,
+      allowNull: false,
+    },
+    role: {
+      type: STRING,
+      allowNull: false,
+    },
+    password: {
+      type: STRING,
+      allowNull: false,
+    },
+    email: {
+      type: STRING,
+      allowNull: false,
     },
   },
   {
     underscored: true,
     sequelize: db,
-    modelName: 'users',
+    modelName: 'User',
     timestamps: false,
+    tableName: 'users',
   },
 );
 
