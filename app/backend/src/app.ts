@@ -1,6 +1,7 @@
 import * as express from 'express';
 import teamsRouter from './router/Team';
 import loginRouter from './router/Login';
+import matcheRouter from './router/Matche';
 
 class App {
   public app: express.Express;
@@ -16,6 +17,7 @@ class App {
     // Rotas requisitos
     this.app.use('/teams', teamsRouter);
     this.app.use('/login', loginRouter);
+    this.app.use('/matches', matcheRouter);
   }
 
   private config():void {
