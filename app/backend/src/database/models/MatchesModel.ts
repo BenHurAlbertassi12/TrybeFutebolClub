@@ -1,46 +1,17 @@
 import { Model, INTEGER, BOOLEAN } from 'sequelize';
 import db from '.';
-import TeamModel from './TeamModel';
+import Team from './TeamModel';
 
-interface IMatch {
-  id?: number;
-  homeTeamId: number;
-  awayTeamId: number;
-  homeTeamGoals: number;
-  awayTeamGoals: number;
-  inProgress?: boolean;
+class Matches extends Model {
+  readonly id!: number;
+  homeTeamId!: number;
+  awayTeamId!: number;
+  homeTeamGoals!: number;
+  awayTeamGoals!: number;
+  inProgress!: boolean;
 }
 
-class MatchesModel extends Model implements IMatch {
-  declare id: number;
-  declare homeTeamId: number;
-  declare homeTeamGoals: number;
-  declare awayTeamId: number;
-  declare awayTeamGoals: number;
-  declare inProgress: boolean;
-
-  static associate() {
-    TeamModel.hasMany(MatchesModel, {
-      foreignKey: 'homeTeam',
-      as: 'homeTeamHasMany',
-    });
-    TeamModel.hasMany(MatchesModel, {
-      foreignKey: 'awayTeam',
-      as: 'awayTeamHasMany',
-    });
-
-    MatchesModel.belongsTo(TeamModel, {
-      foreignKey: 'homeTeam',
-      as: 'teamHome',
-    });
-    MatchesModel.belongsTo(TeamModel, {
-      foreignKey: 'awayTeam',
-      as: 'teamAway',
-    });
-  }
-}
-
-MatchesModel.init(
+Matches.init(
   {
     id: {
       allowNull: false,
@@ -49,14 +20,26 @@ MatchesModel.init(
       type: INTEGER,
     },
     homeTeamId: {
-      allowNull: false,
       type: INTEGER,
-    },
-    homeTeamGoals: {
       allowNull: false,
-      type: INTEGER,
+      references: {
+        model: 'teams',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     awayTeamId: {
+      allowNull: false,
+      type: INTEGER,
+      references: {
+        model: 'teams',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
+    homeTeamGoals: {
       allowNull: false,
       type: INTEGER,
     },
@@ -72,9 +55,13 @@ MatchesModel.init(
   {
     underscored: true,
     sequelize: db,
-    modelName: 'matches',
+    modelName: 'Matches',
     timestamps: false,
+    tableName: 'matches',
   },
 );
 
-export default MatchesModel;
+Matches.belongsTo(Team, { foreignKey: 'homeTeamId', as: 'homeTeam' });
+Matches.belongsTo(Team, { foreignKey: 'awayTeamId', as: 'awayTeam' });
+
+export default Matches;
