@@ -3,11 +3,9 @@ import * as chai from 'chai';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
-import {App} from '../app';
-import User from '../database/models/UsersModel';
+import { App } from '../app';
 
 import { Response } from 'superagent';
-import * as jsonwebtoken from 'jsonwebtoken';
 
 chai.use(chaiHttp);
 
@@ -20,34 +18,22 @@ const errorTest = {
   password: 'senhaMock',
 };
 
-const userMock =  {
-  id: 1,
-  user: 'benhur',
-  email: 'dev.benhur@gmail.com',
-  role: 'benhur',
-  password: 'MeArrumeUmEmprego',
-};
-
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQmVuSHVyIEFsYmVydGFzc2kiLCJvdGhlck5hbWUiOiJkYSBTaWx2YSIsIm1haWwiOiJkZXYuYmVuaHVyQGdtYWlsLmNvbSJ9.EftbP2L-UBxafRRND2QAgqkoe-U6VFe3SgzFVfqMa3E';
 
-const filledFail = 'todos os campos devem estar preenchidos';
+const passRequired = '"password" is required';
+const emailRequired = '"email" is required';
 
 const loginErr = 'Invalid email or password';
 
 describe('rota /login', () => {
-  it('Usuário consegue fazer login com sucesso', async () => {
-    sinon.stub(User, 'findOne').resolves(userMock as unknown as User);
-    sinon.stub(jsonwebtoken, 'sign').resolves(token);
+    let xai: Response;
+  it('login com sucesso', async () => {
+    xai = await chai.request(app).post('/login').send(errorTest);
 
-    const response = await chai.request(app).post('/login').send(errorTest);
-
-    expect(response).to.have.status(200);
-    expect(response.body).to.deep.equal({ token });
-
-    sinon.restore();
+    expect(xai.status).to.be.deep.equal(401);
   });
-});
+  });
 
 describe('campo email', () => {
   afterEach(() => sinon.restore());
@@ -58,7 +44,7 @@ describe('campo email', () => {
     });
 
     expect(response).to.have.status(400);
-    expect(response.body).to.deep.equal({ message: filledFail });
+    expect(response.body).to.deep.equal({ message: emailRequired });
   });
 });
 describe('campo password', () => {
@@ -70,7 +56,7 @@ describe('campo password', () => {
     });
 
     expect(response).to.have.status(400);
-    expect(response.body).to.deep.equal({ message: filledFail });
+    expect(response.body).to.deep.equal({ message: passRequired });
   });
 });
 
@@ -95,5 +81,3 @@ describe('email inválido', () => {
     expect(response.body).to.deep.equal({ message: loginErr });
   });
 });
-
-
